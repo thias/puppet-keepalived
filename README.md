@@ -9,7 +9,7 @@ Install, enable and configure the keepalived VRRP and LVS management daemon.
 
 The configuration file to be used can be specificed using either the `$content`
 parameter (typically for templates), or the `$source` parameter. If neither is
-specified, you will need to manage it rom elsewhere.
+specified, you will need to manage it from elsewhere.
 
 See the `templates/sysconfig.erb` file for the possible `$options` values. The
 default is `-D` which enables both VRRP and LVS.
