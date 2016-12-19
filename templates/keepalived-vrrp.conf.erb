@@ -19,6 +19,16 @@ global_defs {
   <%- end -%>
  <%- end -%>
 }
+<% @groups.each do |gname,gdata| -%>
+
+vrrp_sync_group <%= gname %> {
+  group {
+    <%- gdata.each do |value| -%>
+    <%= value %>
+    <%- end -%>
+  }
+}
+<%- end -%>
 <%- @instances.sort_by {|iname,idata| iname}.each do |iname,idata| -%>
 
 vrrp_instance <%= iname %> {
