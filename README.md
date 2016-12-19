@@ -69,6 +69,20 @@ class { '::keepalived::vrrp':
 }
 ```
 
+You can also define resource groups via the "groups" parameter:
+
+```puppet
+[...]
+class { '::keepalived::vrrp':
+  [...]
+  groups => { 'web_group' => ['web','web_int'] }, 
+  instances => {
+    web => [...]
+    web_int => [...]
+  },
+}
+```
+
 Note that you may also set the `$global_defs_defaults` parameter, which will
 be merged with the more specific `$global_defs`, which is especially useful
 with hiera :
