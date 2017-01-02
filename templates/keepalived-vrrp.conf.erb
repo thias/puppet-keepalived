@@ -19,7 +19,8 @@ global_defs {
   <%- end -%>
  <%- end -%>
 }
-<% @groups.each do |gname,gdata| -%>
+<%- if !@groups.nil? and !@groups.empty? -%>
+<%- @groups.each do |gname,gdata| -%>
 
 vrrp_sync_group <%= gname %> {
   group {
@@ -28,6 +29,7 @@ vrrp_sync_group <%= gname %> {
     <%- end -%>
   }
 }
+<%- end -%>
 <%- end -%>
 <%- @instances.sort_by {|iname,idata| iname}.each do |iname,idata| -%>
 
