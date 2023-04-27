@@ -20,9 +20,36 @@ global_defs {
  <%- end -%>
 }
 <%- @instances.sort_by {|iname,idata| iname}.each do |iname,idata| -%>
+<%- if idata['track_script'] -%>
+<%- idata['track_script'].each do |key, value| %>
+vrrp_script <%= File.basename(value['script'], '.sh') %> {
+  <%- if value['script'] -%>
+  script "<%= value['script'] %>"
+  <%- end -%>
+  <%- if value['interval'] -%>
+  interval <%= value['interval'] %>
+  <%- end -%>
+  <%- if value['weight'] -%>
+  weight <%= value['weight'] %>
+  <%- end -%>
+  <%- if value['timeout'] -%>
+  timeout <%= value['timeout'] %>
+  <%- end -%>
+  <%- if value['rise'] -%>
+  rise <%= value['rise'] %>
+  <%- end -%>
+  <%- if value['fall'] -%>
+  fall <%= value['fall'] %>
+  <%- end -%>
+  <%- if value['user'] -%>
+  user <%= value['user'] %>
+  <%- end -%>
+}
+<%- end -%>
+<%- end -%>
 
 vrrp_instance <%= iname %> {
- <%- idata.sort_by {|key,value| key}.each do |key,value| -%>
+<%- idata.select{|k,v| !['track_script'].include?(k)}.sort_by {|key,value| key}.each do |key,value| -%>
   <%- if value.is_a?(Hash) -%>
   <%= key %> {
    <%- value.sort_by {|k,v| k}.each do |k,v| -%>
@@ -39,5 +66,12 @@ vrrp_instance <%= iname %> {
   <%= key %> <%= value %>
   <%- end -%>
  <%- end -%>
+ <%- if idata['track_script'] -%>
+ <%- idata['track_script'].each do |key, value| %>
+  track_script {
+   <%= File.basename(value['script'], '.sh') %> 
+ }
+ <%- end -%>
+ <%- end -%>
 }
-<% end -%>
+<%- end -%>
