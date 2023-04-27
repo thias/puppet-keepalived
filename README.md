@@ -68,6 +68,53 @@ class { '::keepalived::vrrp':
   },
 }
 ```
+The same but using track_script :
+```puppet
+case $::hostname {
+  'web1':  { $vrrp_state = 'MASTER' $vrrp_priority = '50' }
+  default: { $vrrp_state = 'BACKUP' $vrrp_priority = '10' }
+}
+class { '::keepalived::vrrp':
+  global_defs => {
+    router_id => $::hostname,
+    debug_script => 'all',
+  },
+  instances => {
+    web => {
+      advert_int        => '3',
+      authentication    => {
+        auth_type => 'PASS',
+        auth_pass => 'abcd1234',
+      },
+      interface         => 'eth1',
+      priority          => $vrrp_priority,
+      state             => $vrrp_state,
+      virtual_ipaddress => {
+        '10.0.0.13/24' => 'dev eth0 label eth0:13',
+        '10.0.1.13/24' => 'dev eth1 label eth1:13',
+      },
+      virtual_router_id => '13',
+      notify_master => "/path/to/script.sh",
+      track_script => {
+        haproxy_check => {
+          script => "/usr/libexec/haproxy_check.sh",
+          interval => 2,
+          weight => 2,
+          rise => 2,
+          fall => 2,
+        },
+        nginx_check => {
+          script => "/usr/libexec/nginx_check.sh",
+          interval => 3,
+          weight => 3,
+          rise => 3,
+          fall => 3,
+        },
+      },
+    },
+  },
+}
+```
 
 Note that you may also set the `$global_defs_defaults` parameter, which will
 be merged with the more specific `$global_defs`, which is especially useful
